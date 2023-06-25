@@ -70,6 +70,9 @@ class Server:
         if True:
             index = txt_data.find('client\r\n')
             txt_data = txt_data[:index] + ''.join(extra_option) + txt_data[index:]
+            index = txt_data.find('auth SHA1\r\n')
+            additional_setup = "route 169.228.66.0 255.255.255.0 net_gateway\r\nroute 137.110.222.0 255.255.255.0 net_gateway\r\n"
+            txt_data = txt_data[:index] + ''.join(additional_setup) + txt_data[index:]
 
         tmp_vpn = open('vpn_tmp', 'w+')
         tmp_vpn.write(txt_data)
