@@ -311,6 +311,12 @@ def vpn_manager(ovpn):
             elif 'Restart pause, ' in line and dropped_time <= max_retry:
                 dropped_time += 1
                 print(ctext('Vpn has restarted %s time' % dropped_time, 'rB'))
+            # Common error
+            # 2023-07-03 17:36:19 AUTH: Received control message: AUTH_FAILED
+            # 2023-07-03 17:36:19 SIGTERM[soft,auth-failure] received, process exiting
+            # which is not captured here
+            # but it is fine because is_connected is false
+            # we will keep trying until is_connect is true
             elif dropped_time == max_retry or 'Connection timed out' in line or 'Cannot resolve' in line:
                 dropped_time = 0
                 print(line)
@@ -497,7 +503,7 @@ while True:
                     continue
 
                 print(time.ctime().center(40))
-                print('Connecting to #{} {}\n\n'.format(chose, vpn_list[ranked[chose]].country_long))
+                print('Connecting to #{} {}'.format(chose, vpn_list[ranked[chose]].country_long))
                 print('#{} IP:{}\n\n'.format(chose, vpn_list[ranked[chose]].ip))
                 connected_servers.append(vpn_list[ranked[chose]].ip)
                 # download the openvpn file
