@@ -369,8 +369,12 @@ else:
 
     print('\n' + '_' * 12 + ctext(' First time config ', 'gB') + '_' * 12 + '\n')
 
-    cfg.proxy['use_proxy'] = 'no' if input(
-        ctext('Do you need proxy to connect? ', 'B') + '(yes|[no]):') in 'no' else 'yes'
+    #cfg.proxy['use_proxy'] = 'no' if input(
+        # ctext('Do you need proxy to connect? ', 'B') + '(yes|[no]):') in 'no' else 'yes'
+    
+    # Skip first time config
+    cfg.proxy['use_proxy'] = 'no'
+
     if cfg.proxy['use_proxy'] == 'yes':
         proxy = port = ip = ''
         useit = 'no'
@@ -491,7 +495,7 @@ while True:
                     continue
 
                 print(time.ctime().center(40))
-                print(('Connect to ' + vpn_list[ranked[chose]].country_long).center(40))
+                print(('Connecting to #{} '.format(chose) + vpn_list[ranked[chose]].country_long).center(40))
                 print(vpn_list[ranked[chose]].ip.center(40))
                 connected_servers.append(vpn_list[ranked[chose]].ip)
                 # download the openvpn file
@@ -505,6 +509,7 @@ while True:
                 if is_connected == True:
                     break
                 else:
+                    print(('Failed connect to #{} '.format(chose) + ' ' + vpn_list[ranked[chose]].country_long).center(40))
                     continue
 
             # If we cant find anything at the end? try again
