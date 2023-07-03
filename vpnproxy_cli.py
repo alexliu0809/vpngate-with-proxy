@@ -296,6 +296,7 @@ def vpn_manager(ovpn):
 
     command = ['openvpn', '--config', ovpn]
     p = Popen(command, stdout=PIPE, stdin=PIPE, universal_newlines=True)
+    is_connected = False
     try:
         while p.poll() is None:
             line = p.stdout.readline()
@@ -303,6 +304,7 @@ def vpn_manager(ovpn):
                 print(line, end=' ')
             if 'Initialization Sequence Completed' in line:
                 dropped_time = 0
+                is_connected = True
                 post_action('up')
                 print(ctext('VPN tunnel established successfully'.center(40), 'B'))
                 print('Ctrl+C to quit VPN'.center(40))
@@ -321,6 +323,7 @@ def vpn_manager(ovpn):
     finally:
         post_action('down')
 
+    return is_connected
 
 def signal_term_handler(signal, frame):
     global SIGTERM
@@ -454,6 +457,7 @@ spaces = [5, 4, 5, 8, 12, 4, 8, 6, 16, 6]
 labels = [label.center(spaces[ind]) for ind, label in enumerate(labels)]
 connected_servers = []
 
+round_num = 0
 while True:
     print(ctext('Use proxy: ', 'B'), use_proxy, end=' ')
     print(' || ', ctext('Country: ', 'B'), s_country, end=' ')
@@ -473,38 +477,72 @@ while True:
             print(text)
 
     try:
-        server_sum = min(len(ranked), 20)
-        user_input = input(ctext('Vpn command: ', 'gB'))
-        if user_input.strip().lower() in ['q', 'quit', 'exit']:
-            print(ctext('Goodbye'.center(40), 'gB'))
-            sys.exit()
-        elif user_input.strip().lower() in ('r', 'refresh'):
+        server_sum = min(len(ranked), 40)
+        # Start by refreshing the list
+        if round_num == 0:
             ranked, vpn_list = refresh_data()
-        elif user_input.strip().lower() in ('c', 'config'):
-            get_input(cfg, [user_input])
+            round_num += 1
+            continue
+        # then try to connect
+        elif round_num == 1:
+            for chose in range(server_sum):
+                # do japan only
+                if str(vpn_list[ranked[chose]].country_short).lower() != 'jp':
+                    continue
 
-            mirrors = ["http://www.vpngate.net"] + cfg.mirror['url'].split(', ')
-            use_proxy, proxy, port, ip = cfg.proxy.values()
-            sort_by = cfg.sort['key']
-            s_country, s_port, s_score = cfg.filter.values()
-            dns_fix, dns = cfg.dns.values()
-            verbose = cfg.openvpn['verbose']
+                print(time.ctime().center(40))
+                print(('Connect to ' + vpn_list[ranked[chose]].country_long).center(40))
+                print(vpn_list[ranked[chose]].ip.center(40))
+                connected_servers.append(vpn_list[ranked[chose]].ip)
+                # download the openvpn file
+                vpn_file = vpn_list[ranked[chose]].write_file()
+                vpn_file.close()
+                is_connected = vpn_manager(os.path.abspath(vpn_file.name))
 
-            ranked, vpn_list = refresh_data()
-        elif re.findall(r'^\d+$', user_input.strip()) and int(user_input) < server_sum:
-            chose = int(user_input)
-            print(time.ctime().center(40))
-            print(('Connect to ' + vpn_list[ranked[chose]].country_long).center(40))
-            print(vpn_list[ranked[chose]].ip.center(40))
-            connected_servers.append(vpn_list[ranked[chose]].ip)
-            vpn_file = vpn_list[ranked[chose]].write_file()
-            vpn_file.close()
-            vpn_manager(os.path.abspath(vpn_file.name))
-        else:
-            print('Invalid command!')
-            print('  q(uit) to quit\n  r(efresh) to refresh table\n'
-                  '  c(onfig) to change setting\n  number in range 0~%s to choose vpn\n' % (server_sum - 1))
-            time.sleep(3)
+                round_num = 0
+
+                # Restart the whole thing again
+                if is_connected == True:
+                    break
+                else:
+                    continue
+
+
+
+        # user_input = input(ctext('Vpn command: ', 'gB'))
+        # if user_input.strip().lower() in ['q', 'quit', 'exit']:
+        #     print(ctext('Goodbye'.center(40), 'gB'))
+        #     sys.exit()
+        # # Refreshes data of vpn_list
+        # elif user_input.strip().lower() in ('r', 'refresh'):
+        #     ranked, vpn_list = refresh_data()
+        # elif user_input.strip().lower() in ('c', 'config'):
+        #     get_input(cfg, [user_input])
+
+        #     mirrors = ["http://www.vpngate.net"] + cfg.mirror['url'].split(', ')
+        #     use_proxy, proxy, port, ip = cfg.proxy.values()
+        #     sort_by = cfg.sort['key']
+        #     s_country, s_port, s_score = cfg.filter.values()
+        #     dns_fix, dns = cfg.dns.values()
+        #     verbose = cfg.openvpn['verbose']
+
+        #     ranked, vpn_list = refresh_data()
+        # # Automatically connect after user input
+        # elif re.findall(r'^\d+$', user_input.strip()) and int(user_input) < server_sum:
+        #     chose = int(user_input)
+        #     print(time.ctime().center(40))
+        #     print(('Connect to ' + vpn_list[ranked[chose]].country_long).center(40))
+        #     print(vpn_list[ranked[chose]].ip.center(40))
+        #     connected_servers.append(vpn_list[ranked[chose]].ip)
+        #     # download the openvpn file
+        #     vpn_file = vpn_list[ranked[chose]].write_file()
+        #     vpn_file.close()
+        #     vpn_manager(os.path.abspath(vpn_file.name))
+        # else:
+        #     print('Invalid command!')
+        #     print('  q(uit) to quit\n  r(efresh) to refresh table\n'
+        #           '  c(onfig) to change setting\n  number in range 0~%s to choose vpn\n' % (server_sum - 1))
+        #     time.sleep(3)
 
         if SIGTERM:
             print(ctext('Goodbye'.center(40), 'gB'))
