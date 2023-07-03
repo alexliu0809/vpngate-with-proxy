@@ -507,6 +507,9 @@ while True:
                 else:
                     continue
 
+            # If we cant find anything at the end? try again
+            round_num = 0
+
 
 
         # user_input = input(ctext('Vpn command: ', 'gB'))
