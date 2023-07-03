@@ -462,6 +462,8 @@ labels = [label.center(spaces[ind]) for ind, label in enumerate(labels)]
 connected_servers = []
 
 round_num = 0
+show_top = 40
+
 while True:
     print(ctext('Use proxy: ', 'B'), use_proxy, end=' ')
     print(' || ', ctext('Country: ', 'B'), s_country, end=' ')
@@ -472,7 +474,7 @@ while True:
         print('\nNo server found for "%s"\n' % s_country)
     else:
         print(ctext(''.join(labels), 'gB'))
-        for index, key in enumerate(ranked[:20]):
+        for index, key in enumerate(ranked[:show_top]):
             text = '%2d:'.center(6) % index + str(vpn_list[key])
             if connected_servers and vpn_list[key].ip == connected_servers[-1]:
                 text = ctext(text, 'y')
@@ -481,7 +483,7 @@ while True:
             print(text)
 
     try:
-        server_sum = min(len(ranked), 40)
+        server_sum = min(len(ranked), show_top)
         # Start by refreshing the list
         if round_num == 0:
             ranked, vpn_list = refresh_data()
@@ -495,8 +497,8 @@ while True:
                     continue
 
                 print(time.ctime().center(40))
-                print(('Connecting to #{} '.format(chose) + vpn_list[ranked[chose]].country_long).center(40))
-                print(vpn_list[ranked[chose]].ip.center(40))
+                print('Connecting to #{} {}\n\n'.format(chose, vpn_list[ranked[chose]].country_long))
+                print('#{} IP:{}\n\n'.format(chose, vpn_list[ranked[chose]].ip))
                 connected_servers.append(vpn_list[ranked[chose]].ip)
                 # download the openvpn file
                 vpn_file = vpn_list[ranked[chose]].write_file()
@@ -509,7 +511,7 @@ while True:
                 if is_connected == True:
                     break
                 else:
-                    print(('Failed connect to #{} '.format(chose) + ' ' + vpn_list[ranked[chose]].country_long).center(40))
+                    print('Failed connect to #{} {}\n'.format(chose, vpn_list[ranked[chose]].country_long))
                     continue
 
             # If we cant find anything at the end? try again
