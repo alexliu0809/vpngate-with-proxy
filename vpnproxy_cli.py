@@ -90,7 +90,7 @@ def vpn_manager(ovpn):
         So openvpn not keep sending requests to proxy server and
          save you from being blocked.
     """
-    global dns, verbose, dropped_time
+    global dropped_time
 
     command = ['openvpn', '--config', ovpn]
     p = Popen(command, stdout=PIPE, stdin=PIPE, universal_newlines=True)
@@ -98,8 +98,7 @@ def vpn_manager(ovpn):
     try:
         while p.poll() is None:
             line = p.stdout.readline()
-            if verbose == 'yes':
-                print(line, end=' ')
+            print(line, end=' ')
             if 'Initialization Sequence Completed' in line:
                 dropped_time = 0
                 is_connected = True
