@@ -71,6 +71,7 @@ def get_data():
         for ovpn_file in ovpn_files:
             with open(ovpn_file) as f:
                 servers.append(Server(ovpn_file, "".join(f.readlines())))
+        return servers
     else:
         print('Failed to get VPN servers data\nCheck your network setting and proxy')
         sys.exit(1)
@@ -80,7 +81,7 @@ def refresh_data():
     # fetch data from vpngate.net
     print("fetching data")
     vpnlist = get_data()
-    sort = sorted(vpnlist.keys(), key=lambda x: vpnlist[x].fname)
+    sort = sorted(vpnlist, key=lambda x: vpnlist[x].fname)
     return sort, vpnlist
 
 def vpn_manager(ovpn):
