@@ -81,7 +81,7 @@ def refresh_data():
     # fetch data from vpngate.net
     print("fetching data")
     vpnlist = get_data()
-    sort = sorted(vpnlist, key=lambda x: vpnlist[x].fname)
+    sort = sorted(vpnlist, key=lambda x: x.fname)
     return sort, vpnlist
 
 def vpn_manager(ovpn):
