@@ -47,14 +47,14 @@ class Server:
     def write_file(self):
         txt_data = self.config_data
 
-        extra_option = ['keepalive 5 30\r\n',  # prevent connection drop due to inactivity timeout
-                        'connect-retry 2\r\n']
+        extra_option = ['keepalive 5 30\n',  # prevent connection drop due to inactivity timeout
+                        'connect-retry 2\n']
         if True:
-            txt_data.replace("auth-user-pass", "auth-user-pass /data/deploy/FailsFromCrypto/vpngate/login.txt")
-            index = txt_data.find('client\r\n')
+            txt_data = txt_data.replace("auth-user-pass", "auth-user-pass /data/deploy/FailsFromCrypto/vpngate/login.txt")
+            index = txt_data.find('client\n')
             txt_data = txt_data[:index] + ''.join(extra_option) + txt_data[index:]
-            index = txt_data.find('auth SHA1\r\n')
-            additional_setup = "route 169.228.66.0 255.255.255.0 net_gateway\r\nroute 137.110.222.0 255.255.255.0 net_gateway\r\ndata-ciphers AES-128-GCM:AES-128-CBC\r\n"
+            index = txt_data.find('auth SHA1\n')
+            additional_setup = "route 169.228.66.0 255.255.255.0 net_gateway\nroute 137.110.222.0 255.255.255.0 net_gateway\ndata-ciphers AES-128-GCM:AES-128-CBC\n"
             txt_data = txt_data[:index] + ''.join(additional_setup) + txt_data[index:]
 
         tmp_vpn = open('vpn_tmp', 'w+')
