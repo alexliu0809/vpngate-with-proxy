@@ -16,6 +16,7 @@ from config import *
 from queue import Queue
 from threading import Thread
 from subprocess import call, Popen, PIPE, check_output
+import sys
 
 # Get sudo privilege
 euid = os.geteuid()
@@ -151,6 +152,8 @@ ranked, vpn_list = refresh_data()
 
 round_num = 0
 show_top = 40
+
+print(sys.argv)
 
 while True:
     try:
