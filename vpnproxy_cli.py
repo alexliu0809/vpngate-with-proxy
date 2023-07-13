@@ -164,10 +164,6 @@ while True:
         # then try to connect
         elif round_num == 1:
             for chose in range(server_sum):
-                # do japan only
-                if str(vpn_list[ranked[chose]].country_short).lower() != 'jp':
-                    continue
-
                 print(time.ctime().center(40))
                 print('Connecting to #{} {}'.format(chose, vpn_list[ranked[chose]].fname))
                 # download the openvpn file
