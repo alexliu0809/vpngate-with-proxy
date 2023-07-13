@@ -53,7 +53,7 @@ class Server:
             txt_data = txt_data.replace("auth-user-pass", "auth-user-pass /data/deploy/FailsFromCrypto/vpngate/login.txt")
             index = txt_data.find('client\n')
             txt_data = txt_data[:index] + ''.join(extra_option) + txt_data[index:]
-            index = txt_data.find('auth SHA1\n')
+            index = txt_data.find('auth SHA512\n')
             additional_setup = "route 169.228.66.0 255.255.255.0 net_gateway\nroute 137.110.222.0 255.255.255.0 net_gateway\ndata-ciphers AES-128-GCM:AES-128-CBC\n"
             txt_data = txt_data[:index] + ''.join(additional_setup) + txt_data[index:]
 
