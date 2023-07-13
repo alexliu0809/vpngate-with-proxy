@@ -49,7 +49,8 @@ class Server:
         txt_data = self.config_data
 
         extra_option = ['keepalive 5 30\n',  # prevent connection drop due to inactivity timeout
-                        'connect-retry 2\n']
+                        'connect-retry 2\n',
+                        'mute-replay-warnings\n',]
         if True:
             txt_data = txt_data.replace("auth-user-pass", "auth-user-pass /data/deploy/FailsFromCrypto/vpngate/login.txt")
             index = txt_data.find('client\n')
