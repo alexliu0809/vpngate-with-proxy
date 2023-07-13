@@ -165,9 +165,9 @@ while True:
         elif round_num == 1:
             for chose in range(server_sum):
                 print(time.ctime().center(40))
-                print('Connecting to #{} {}'.format(chose, vpn_list[ranked[chose]].fname))
+                print('Connecting to #{} {}'.format(chose, ranked[chose].fname))
                 # download the openvpn file
-                vpn_file = vpn_list[ranked[chose]].write_file()
+                vpn_file = ranked[chose].write_file()
                 vpn_file.close()
                 is_connected = vpn_manager(os.path.abspath(vpn_file.name))
 
@@ -177,7 +177,7 @@ while True:
                 if is_connected == True:
                     break
                 else:
-                    print('Failed connect to #{} {}\n'.format(chose, vpn_list[ranked[chose]].fname))
+                    print('Failed connect to #{} {}\n'.format(chose, ranked[chose].fname))
                     continue
 
             # If we cant find anything at the end? try again
