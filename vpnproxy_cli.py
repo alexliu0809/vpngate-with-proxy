@@ -146,7 +146,7 @@ print(len(sys.argv))
 start_index = 0
 if len(sys.argv) > 1:
     if "-s" in sys.argv[-1]:
-        start_index = int(sys.argv[-1].replace("-s"))
+        start_index = int(sys.argv[-1].replace("-s",""))
 
 # dead gracefully
 signal.signal(signal.SIGTERM, signal_term_handler)
