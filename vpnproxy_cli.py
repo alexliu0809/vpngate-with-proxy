@@ -17,6 +17,9 @@ from queue import Queue
 from threading import Thread
 from subprocess import call, Popen, PIPE, check_output
 import sys
+import argparse
+
+
 
 # Get sudo privilege
 euid = os.geteuid()
@@ -24,6 +27,8 @@ if euid != 0:
     # args = ['sudo', '-E', sys.executable] + sys.argv + [os.environ]
     # os.execlpe('sudo', *args)
     raise RuntimeError('Permission deny! You need to "sudo" or use "./run cli" instead')
+
+
 
 # detect Debian based or Redhat based OS's package manager
 pkg_mgr = None
@@ -137,6 +142,12 @@ def signal_term_handler(signal, frame):
 
 
 # ---------------------------- Main  --------------------------------
+parser = argparse.ArgumentParser()
+parser.add_argument('-s', '--start', type=int, default = 0)
+args = parser.parse_args()
+start_index = args.s
+
+
 # dead gracefully
 signal.signal(signal.SIGTERM, signal_term_handler)
 SIGTERM = 0
@@ -154,7 +165,6 @@ ranked, vpn_list = refresh_data()
 round_num = 0
 show_top = 40
 
-print(sys.argv)
 
 while True:
     try:
@@ -166,7 +176,7 @@ while True:
             continue
         # then try to connect
         elif round_num == 1:
-            for chose in range(server_sum):
+            for chose in list(range(start_index, server_sum)) + list(range(0, start_index)):
                 print(time.ctime().center(40))
                 print('Connecting to #{} {}'.format(chose, ranked[chose].fname))
                 # download the openvpn file
