@@ -142,11 +142,11 @@ def signal_term_handler(signal, frame):
 
 
 # ---------------------------- Main  --------------------------------
-parser = argparse.ArgumentParser()
-parser.add_argument('-s', '--start', type=int, default = 0)
-args = parser.parse_args()
-start_index = args.s
-
+print(len(sys.argv))
+start_index = 0
+if len(sys.argv) > 1:
+    if "-s" in sys.argv[-1]:
+        start_index = int(sys.argv[-1].replace("-s"))
 
 # dead gracefully
 signal.signal(signal.SIGTERM, signal_term_handler)
