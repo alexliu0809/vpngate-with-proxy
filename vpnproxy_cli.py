@@ -147,7 +147,7 @@ def signal_term_handler(signal, frame):
 
 
 # ---------------------------- Main  --------------------------------
-print(len(sys.argv))
+print(sys.argv)
 start_index = 0
 if len(sys.argv) > 1:
     if "-s=" in sys.argv[-1]:
@@ -162,7 +162,7 @@ if len(sys.argv) > 2:
         cfonly = True
     if "--cfonly" in sys.argv[-1]:
         cfonly = True
-
+print('CF Only: ', cfonly)
 
 
 # dead gracefully
