@@ -153,7 +153,7 @@ if len(sys.argv) > 1:
     if "-s=" in sys.argv[-1]:
         start_index = int(sys.argv[-1].replace("-s=",""))
 
-if len(sys.args) > 2:
+if len(sys.argv) > 2:
     if "-s" in sys.argv[-1]:
         start_index = int(sys.argv[-1].replace("-s=",""))
     if "-s" in sys.argv[-2]:
