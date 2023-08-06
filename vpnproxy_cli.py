@@ -19,6 +19,7 @@ from subprocess import call, Popen, PIPE, check_output
 import sys
 import argparse
 
+cfonly = False
 
 
 # Get sudo privilege
@@ -51,6 +52,7 @@ class Server:
         self.fname = fname
 
     def write_file(self):
+        global cfonly
         txt_data = self.config_data
 
         extra_option = ['keepalive 5 30\n',  # prevent connection drop due to inactivity timeout
@@ -61,7 +63,10 @@ class Server:
             index = txt_data.find('client\n')
             txt_data = txt_data[:index] + ''.join(extra_option) + txt_data[index:]
             index = txt_data.find('auth SHA512\n')
-            additional_setup = "route 169.228.66.0 255.255.255.0 net_gateway\nroute 137.110.222.0 255.255.255.0 net_gateway\nroute 45.77.68.0 255.255.255.0 net_gateway\nroute 108.61.214.0 255.255.255.0 net_gateway\ndata-ciphers AES-128-GCM:AES-128-CBC\n"
+            if cfonly == False:
+                additional_setup = "route 169.228.66.0 255.255.255.0 net_gateway\nroute 137.110.222.0 255.255.255.0 net_gateway\ndata-ciphers AES-128-GCM:AES-128-CBC\n"
+            else:
+                additional_setup = "pull-filter ignore redirect-gateway\nroute-nopull\nroute 208.67.222.0 255.255.255.0\nroute 104.16.0.0 255.248.0.0\nroute 104.24.0.0 255.252.0.0\nroute 172.64.0.0 255.248.0.0\nroute 173.0.0.0 255.0.0.0\ndata-ciphers AES-128-GCM:AES-128-CBC\n"
             txt_data = txt_data[:index] + ''.join(additional_setup) + txt_data[index:]
 
         tmp_vpn = open('vpn_tmp', 'w+')
@@ -147,6 +152,18 @@ start_index = 0
 if len(sys.argv) > 1:
     if "-s=" in sys.argv[-1]:
         start_index = int(sys.argv[-1].replace("-s=",""))
+
+if len(sys.args) > 2:
+    if "-s" in sys.argv[-1]:
+        start_index = int(sys.argv[-1].replace("-s=",""))
+    if "-s" in sys.argv[-2]:
+        start_index = int(sys.argv[-2].replace("-s=",""))
+    if "--cfonly" in sys.argv[-2]:
+        cfonly = True
+    if "--cfonly" in sys.argv[-1]:
+        cfonly = True
+
+
 
 # dead gracefully
 signal.signal(signal.SIGTERM, signal_term_handler)
