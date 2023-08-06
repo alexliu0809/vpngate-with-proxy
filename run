@@ -12,7 +12,7 @@ type=$1
 arg=$2
 
 if [ "$type" == "cli" ]; then
-    sudo python3 vpnproxy_cli.py $user_home $arg
+    sudo python3 vpnproxy_cli.py $user_home $@
 else
     if [ "$type" == "old" ]; then
         sudo python3 vpnproxy_old.py $user_home $arg
